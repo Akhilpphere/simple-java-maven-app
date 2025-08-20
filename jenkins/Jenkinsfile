@@ -1,31 +1,43 @@
-pipeline
-{
+pipeline {
+    agent any
 
-agent any
-
-tools {
-  maven 'mymaven'
-}
-
-stages{
-
-    stage('build')
-    {
-        steps {
-            sh 'mvn clean package'
-        }
-
-        post {
-        success {
-            archiveArtifacts artifacts: '**/target/*.war'
-                 }
-            }
-
+    tools {
+        maven 'mymaven'   // Make sure Maven is configured in Jenkins (Global Tool Config)
+        
     }
 
-   
+    stages {
+        stage('Build') {
+            steps {
+                bat 'mvn clean package -DskipTests'
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/target/*.war'
+                }
+            }
+        }
 
-    
-}
+        stage('Test') {
+            steps {
+                bat 'mvn test'
+            }
+        }
 
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                // put deployment commands/scripts here
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline finished."
+        }
+        failure {
+            echo "Pipeline failed!"
+        }
+    }
 }
