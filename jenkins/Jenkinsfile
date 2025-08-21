@@ -30,6 +30,13 @@ pipeline {
                 // put deployment commands/scripts here
             }
         }
+
+        // Jenkinsfile snippet for Docker build
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t my-app:latest .'
+            }
+        }
     }
 
     post {
